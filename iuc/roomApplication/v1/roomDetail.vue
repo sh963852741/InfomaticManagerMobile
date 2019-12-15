@@ -1,16 +1,16 @@
 <template>
 	<view id="room-detail">
-		<cu-custom bgColor="bg-gradual-blue" isBack="">
+		<cu-custom bgColor="bg-informatic-brown" isBack>
 			<block slot="backText">返回</block>
 			<block slot="content">实验室详细信息</block>
 		</cu-custom>
-		<labInfoCard :lab="labInfo" arrowDisplay="none" color="bg-gradual-blue"></labInfoCard>
+		<labInfoCard class="margin-lr-xl" :lab="labInfo"></labInfoCard>
 		<scroll-view scroll-x class="bg-white nav text-center cardPosition shadow" :style="[{height:customBar + 'px'}]">
-			<view class="cu-item" :class="index==tabCur?'text-blue cur':''" v-for="(item,index) in arrays" :key="index" @tap="tabSelect" :data-id="index">
+			<view class="cu-item" :class="index==tabCur?'text-informatic-brown text-bold cur':''" v-for="(item,index) in arrays" :key="index" @tap="tabSelect" :data-id="index">
 				{{item}}
 			</view>
 		</scroll-view>
-		<view class="margin-tb bg-white text-center" v-if="tabCur==0">
+		<view class="margin-tb bg-white text-center padding-tb" v-if="tabCur==0">
 			<text>0暂无内容</text>
 		</view>
 		<view class="margin-tb bg-white cu-list menu" v-else-if="tabCur==1">
@@ -19,13 +19,14 @@
 				<view class="cu-tag round sm" :class="'bg-' + wColor[item.State]">{{ workflow[item.State] }}</view>
 			</view>
 		</view>
-		<view class="padding flex flex-direction" @click="create()">
+		<view v-if="labInfo.RoomType==10" class="padding flex flex-direction" @click="create()">
 			<button class="cu-btn bg-blue lg">申请</button>
 		</view>
 	</view>
 </template>
 
 <script>
+	let app = require("@/config");
 	let enums = require("../enumsv1.js");
 	export default{
 		onLoad(opt) {

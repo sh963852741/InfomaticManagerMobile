@@ -6,7 +6,31 @@
 			"style": {}
 		},
 		{
+			"path": "iuc/index/testEntry",
+			"style": {}
+		},
+		{
 			"path": "uc/login/login",
+			"style": {}
+		},
+		{
+			"path":"iuc/roomApplication/v2/myApplication",
+			"style": {}
+		},
+		{
+			"path":"iuc/roomApplication/v2/flowsCtrl",
+			"style": {}
+		},
+		{
+			"path":"iuc/roomApplication/v2/todoList",
+			"style": {}
+		},
+		{
+			"path":"iuc/roomApplication/v2/myAttend",
+			"style": {}
+		},
+		{
+			"path":"iuc/roomApplication/v2/allList",
 			"style": {}
 		},
 		{
@@ -70,6 +94,14 @@
 			"style": {}
 		},
 		{
+			"path":"iuc/roomApplication/v1/myList",
+			"style": {}
+		},
+		{
+			"path":"iuc/roomApplication/v1/myInvolve",
+			"style": {}
+		},
+		{
 			"path":"iuc/profile/profile",
 			"style": {}
 		},
@@ -82,6 +114,14 @@
 			"style": {}
 		},
 		{
+			"path":"iuc/News/newsList",
+			"style": {}
+		},
+		{
+			"path":"iuc/News/newsDetail",
+			"style": {}
+		},
+		{
 			"path":"iuc/userInfo/modifyGrade",
 			"style": {}
 		},
@@ -89,7 +129,15 @@
 			"path":"iuc/userInfo/modifyMobile",
 			"style": {}
 		}
-	],
+	    ,{
+            "path" : "iuc/index/index",
+            "style" : {}
+        }
+        ,{
+            "path" : "components/labComponent/labTimeLine",
+            "style" : {}
+        }
+    ],
 	"globalStyle": {
 		"mp-alipay": {
 			/* 支付宝小程序特有相关 */

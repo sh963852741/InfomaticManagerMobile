@@ -1,7 +1,6 @@
-<!--宋润涵于2019-10-16编辑 用于创建新申请-->
 <template>
 	<view id="lab-apply-creat">
-		<cu-custom bgColor="bg-gradual-blue" isBack="">
+		<cu-custom bgColor="bg-informatic-brown" isBack>
 			<block slot="backText">返回</block>
 			<block slot="content">创建申请表</block>
 		</cu-custom>
@@ -20,13 +19,10 @@
 					</view>
 				</picker>
 			</view>
-			<view class="cu-form-group">
-				<view class="title">开始日期<text class="text-red">*</text></view>
-				<Time placeholder="请选择开始日期" @change="selectDate1"></Time>
-			</view>
-			<view class="cu-form-group">
-				<view class="title">结束日期<text class="text-red">*</text></view>
-				<Time placeholder="请选择结束日期" @change="selectDate2"></Time>
+			<view class="cu-form-group" @click="selectDateTime()">
+				<view class="title">申请时段<text class="text-red">*</text></view>
+				<text style="flex: 1;">{{model.startDate===""?"请选择申请时段"
+				:model.startDate+'&nbsp;至&nbsp;'+model.endDate}}</text>
 			</view>
 			<view class="cu-form-group" v-if="isStudent">
 				<view class="title">选择指导老师<text class="text-red">*</text></view>
@@ -37,16 +33,20 @@
 				</picker>
 			</view>
 			<view class="padding flex flex-direction">
-				<button class="cu-btn bg-green lg" :loading="isSubmitting" @click="submit()">提交</button>
+				<button class="cu-btn bg-informatic-brown lg" :disabled="!havePermission" :loading="isSubmitting" @click="submit()">提交</button>
 			</view>
 		</form>
+		<timePicker :show="showPicker" type="rangetime" color="#6d3b5e" 
+		@cancel="selectDateTime()" @confirm="confirmDateTime"/>
 	</view>
 </template>
 
 <script>
 	let steps = require("../stepsv1.js")
+	let app = require("@/config/index")
 	export default {
 		onLoad(opt) {
+			this.havePermission=app.checkPermission("ItemManager.CreateRoomApplicationWorkflow");
 			this.ID = opt.id;
 			this.getInfo();
 			this.getLabCurrentRoom(opt);
@@ -54,7 +54,7 @@
 		methods: {
 			selectTeacher(e) {
 				let u = this.teachers[e.detail.value];
-				this.currentTeacher = u.RealName || "请选择导教师";
+				this.currentTeacher = u.RealName || "请选择指导教师";
 				this.model.guideTeacherId = u.ID || guidEmpty;
 			},
 			selectRoom(e) {
@@ -62,27 +62,6 @@
 				let v = this.rooms[index];
 				this.currentRoom = v.ID === this.guidEmpty ? "选择实验室" : `${v.Building.Name} ${v.Name}`;
 				this.model.roomId = v.ID;
-			},
-			selectDate1(e) {
-				this.model.startDate = e || "请选择开始日期";
-				this.model.startDate = this.model.startDate.replace("年", "/").replace("月", "/").replace("日", "").replace("时", ":").replace(
-					"分", "");
-				if (Date.parse(this.model.startDate) > Date.parse(this.model.endDate)) {
-					this.model.endDate = this.model.startDate;
-					uni.showToast({
-						title: "结束时间不能早于开始时间"
-					});
-				}
-			},
-			selectDate2(e) {
-				this.model.endDate = e || "请选择结束日期";
-				this.model.endDate = this.model.endDate.replace("年", "/").replace("月", "/").replace("日", "").replace("时", ":").replace(
-					"分", "");
-				if (Date.parse(this.model.startDate) > Date.parse(this.model.endDate)) {
-					uni.showToast({
-						title: "结束时间不能早于开始时间"
-					});
-				}
 			},
 			submit() {
 				this.isSubmitting = true;
@@ -121,8 +100,6 @@
 						THIS.stepInfo = msg.data;
 						THIS.isStudent = msg.isStudent;
 						THIS.model.State = msg.data.State;
-						THIS.currentDate = msg.data.CreatedTime.
-						replace("年", "/").replace("月", "/").replace("日", "");
 						THIS.buildings = msg.buildings;
 						THIS.allRooms = msg.rooms;
 						THIS.teachers = msg.teachers;
@@ -144,6 +121,21 @@
 					this.currentRoom = opt.BuildingName+" "+opt.labName;
 					this.model.roomId = opt.roomID;
 				}
+			},
+			selectDateTime()
+			{
+				this.showPicker=!this.showPicker;
+			},
+			confirmDateTime(e)
+			{
+				console.log(e);
+				this.model.startDate=e.value[0];
+				this.model.endDate=e.value[1];
+				this.selectDateTime();
+			},
+			havePermission(e)
+			{
+				return app.checkPermission(e);
 			}
 		},
 		data() {
@@ -153,9 +145,9 @@
 					applicationReason: '',
 					roomId: '',
 					guideTeacherId: '',
-					startDate: '请选择开始日期',
+					startDate: '',
 					state: 0,
-					endDate: '请选择结束日期',
+					endDate: '',
 					isDateTime: true
 				},
 				isSubmitting: false,
@@ -164,15 +156,16 @@
 				guidEmpty: '00000000-0000-0000-0000-000000000000',
 				rooms: [],
 				teachers: [],
-				currentDate: '',
 				currentTeacher: "请选择指导教师",
 				currentRoom: "请选择房间号",
 				isStudent: true,
 				ID: '',
 				roomIndex: [0, 0],
-				stepInfo: {}
+				stepInfo: {},
+				showPicker: false,
+				havePermission: false
 			}
-		}
+		},
 	}
 </script>
 

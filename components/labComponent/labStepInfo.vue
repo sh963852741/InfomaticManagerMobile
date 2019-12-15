@@ -1,10 +1,10 @@
 <template>
-	<view class="cu-steps margin-top">
-		<view class="cu-item" :class="item.finalState" v-for="(item, index) in steps" :key="item.id">
-			<text class="num" :class="item.err" :data-index="index + 1"></text>
-			{{item.name}}
+	<scroll-view scroll-x class="cu-steps margin-tb response">
+		<view class="cu-item padding-lr" :class="item.color" v-for="(item, index) in steps" :key="item.id">
+			<text class="num" :class="item.icon" :data-index="index + 1"></text>
+			{{item.stepName}}
 		</view>
-	</view>
+	</scroll-view>
 </template>
 
 <script>
@@ -13,15 +13,26 @@
 		name: "LabStepInfo",
 		props: {
 			value: {
-				type: Object, 
+				required: true,
+				type: Array,
 				default: () => {}
 			}
 		},
 		data() {
-			let steps = JSON.parse(JSON.stringify(stp));
 			return {
-				steps,
-				bindSteps: []
+				colorDic: {
+					0: '',
+					10: 'text-cyan',
+					20: 'text-blue',
+					30: 'text-red'
+				},
+				iconDic:{
+					0:'',
+					10: 'loading',
+					20: '',
+					30: 'err'
+				},
+				steps: []
 			};
 		},
 		watch: {
@@ -29,45 +40,19 @@
 				deep: true,
 				immediate: true,
 				handler(value) {
-
-					let tb = "text-blue",
-						err = "err",
-						loading = "loading";
-
-					let steps = this.steps;
-					//steps[0].FinalState = value.State > 0 ? tb : "";
-					//steps[0].err = "";
-
-					let isComplete = (v) => {
-						if (v === 20) return tb;
-						if (v === 30) return "text-red";
-						if (v === 10) return "text-cyan";
-						return "";
-					};
-					steps[0].finalState = isComplete(value.ApplicateState);
-					steps[0].err = value.ApplicateState === 30 ? err : ""; //填写申请表
-					steps[0].err = value.ApplicateState === 10 ? loading : "";
-
-					steps[1].finalState = isComplete(value.GuideTeacherState);
-					steps[1].err = value.GuideTeacherState === 30 ? err : ""; //指导老师审核
-					steps[1].err = value.GuideTeacherState === 10 ? loading : "";
-
-					steps[2].finalState = isComplete(value.ReviewState);
-					steps[2].err = value.ReviewState === 30 ? err : ""; //分管领导分配
-					steps[2].err = value.ReviewState === 10 ? loading : "";
-
-					steps[3].finalState = isComplete(value.HandleState);
-					steps[3].err = value.HandleState === 30 ? err : ""; //管理员确认
-					steps[3].err = value.HandleState === 10 ? loading : "";
+					this.steps = this.value.map(value => {
+						value.icon=this.iconDic[value.status];
+						value.color=this.colorDic[value.status];
+						return value;
+					})
 				}
 			}
-		}
+		},
 	}
 </script>
 
 <style>
-.cu-steps .cu-item[class*="text-"] .num.loading::after
-{
-	content: "\e7f1";
-}
+	.cu-steps .cu-item[class*="text-"] .num.loading::after {
+		content: "\e74f";
+	}
 </style>
